@@ -23,6 +23,8 @@ Since the same graph can be used in multiple ways, there is a simple `VAE` class
 constructs the `tf` graph and has useful pointers to important tensors and methods to
 simplify interaction with those tensors.
 
+(being single use code, there are no unit tests here)
+
 
 ## Thoughts
 
