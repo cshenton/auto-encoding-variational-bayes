@@ -1,5 +1,5 @@
 # Variational Auto-Encoder (vanilla)
-Replication of "Auto-Encoding Variational Bayes" (Kingma &amp; Welling, 2013)
+Replication of [Auto-Encoding Variational Bayes](https://arxiv.org/pdf/1312.6114.pdf) (Kingma &amp; Welling, 2013)
 
 
 ## Quick Start
