@@ -105,3 +105,4 @@ ENV/
 
 # Outputs
 img/
+MNIST_data/

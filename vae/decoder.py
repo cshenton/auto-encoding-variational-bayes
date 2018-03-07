@@ -13,8 +13,8 @@ def decoder(latent, img_size, units):
         (tf.distribution.Normal): The batch_shape = (sample x batch x img)
             normal distributions representing the sampled img likelihoods.
     """
-    hidden = tf.layers.dense(latent, units)
+    hidden = tf.layers.dense(latent, units, tf.nn.relu)
 
-    loc = tf.layers.dense(hidden, img_size)
-    scale = tf.layers.dense(hidden, img_size)
+    loc = tf.layers.dense(hidden, img_size, tf.nn.sigmoid)
+    scale = tf.layers.dense(hidden, img_size, tf.nn.softplus)
     return ds.Normal(loc, scale)

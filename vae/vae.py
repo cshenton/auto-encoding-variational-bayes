@@ -7,7 +7,7 @@ from vae.prior import prior
 
 
 class VAE:
-    """VAE is a wrapper around a ful variational auto-encoder graph.
+    """VAE is a wrapper around a full variational auto-encoder graph.
 
     Attributes:
         input (tf.Tensor): Points to image input placeholder.
@@ -37,15 +37,19 @@ class VAE:
         self.decoder = decoder(self.latent, img_size, units)
         self.prior = prior(latent_size)
 
-        likelihood = self.decoder.log_prob(self.input)
-        latent_prior = self.prior.log_prob(self.latent)
-        latent_posterior = self.encoder.log_prob(self.latent)
+        self.likelihood = self.decoder.log_prob(tf.expand_dims(self.input, 0))
 
-        self.loss = (
-            tf.reduce_sum(likelihood) / sample_size +
-            tf.reduce_sum(latent_prior) / sample_size -
-            tf.reduce_sum(latent_posterior) / sample_size
+        loss_batch = -(
+            0.5 * tf.reduce_sum(
+                tf.ones_like(self.encoder.loc) +
+                tf.log(tf.square(self.encoder.loc)) -
+                tf.square(self.encoder.loc) -
+                tf.square(self.encoder.scale),
+                1
+            ) +
+            tf.reduce_mean(self.likelihood, [0, 2]) / sample_size
         )
+        self.loss = tf.reduce_mean(loss_batch)
 
     def decode(self, latent):
         """Decodes the provided latent array, returns a sample from the output.

@@ -13,8 +13,8 @@ def encoder(img, latent_size, units):
         (tf.distribution.Normal): The batch_shape = (batch_size, latent_size)
             batch of posterior normal distributions.
     """
-    hidden = tf.layers.dense(img, units)
+    hidden = tf.layers.dense(img, units, tf.nn.relu)
 
     loc = tf.layers.dense(hidden, latent_size)
-    scale = tf.layers.dense(hidden, latent_size)
+    scale = tf.layers.dense(hidden, latent_size, tf.nn.softplus)
     return ds.Normal(loc, scale)
