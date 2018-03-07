@@ -3,15 +3,15 @@ import tensorflow as tf
 from tensorflow import distributions as ds
 
 
-def prior(lv):
-    """Prior builds the prior distribution against the provided LV tensor.
+def prior(latent):
+    """Prior builds the prior distribution against the provided latent tensor.
 
     Args:
-        lv (tf.Tensor): latent_size x batch_size latent variable tensor.
+        latent (tf.Tensor): latent_size x batch_size latent variable tensor.
 
     Returns:
         tf.distributions.Normal: The distribution.
     """
-    loc = tf.zeros(lv.shape)
-    scale = tf.ones(lv.shape)
+    loc = tf.zeros(latent.shape)
+    scale = tf.ones(latent.shape)
     return ds.Normal(loc, scale)
