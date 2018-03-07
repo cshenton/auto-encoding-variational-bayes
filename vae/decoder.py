@@ -3,15 +3,15 @@ import tensorflow as tf
 from tensorflow import distributions as ds
 
 
-def decoder(latent, img_size=225, units=500):
+def decoder(latent, img_size, units):
     """Decoder builds a decoder network on the given latent variable tensor.
 
     Args:
-        lv (tf.Tensor): The latent variable tensor.
+        lv (tf.Tensor): sample_size x batch_size x latent_size latent tensor.
 
     Returns:
-        (tf.distribution.Normal): The batched normal distribution representing
-            the likelihood over output images given the latent variable.
+        (tf.distribution.Normal): The batch_shape = (sample x batch x img)
+            normal distributions representing the sampled img likelihoods.
     """
     hidden = tf.layers.dense(latent, units)
 

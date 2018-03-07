@@ -3,6 +3,7 @@ import tensorflow as tf
 
 from vae.decoder import decoder
 from vae.encoder import encoder
+from vae.prior import prior
 
 
 class VAE:
@@ -17,58 +18,61 @@ class VAE:
         decoder (tf.distribution.Normal): Decoder distribution.
     """
 
-    def __init__(self, img_shape, batch_size=100, latent_size=10, sample_size=1):
+    def __init__(self, img_size, batch_size=20, latent_size=10,
+                 sample_size=1, units=500):
         """Creates a new instance of VAE.
 
         This creates the complete static graph, which is accessed afterwards
         only through session runs.
 
         Args:
-            img_shape (array of ints): Dimensions of the input images.
+            img_size (int): Flattened dim of input image.
             batch_size (int): The minibatch size, determines input tensor dims.
             latent_size (int): Dimension of the latent normal variable.
             sample_size (int): The sample size drawn from the recognition model.
                 Usually 1, since we do stochastic integration.
         """
-        # create input tensor
-        #   self.input = tf.Placeholder(img_shape + [batch_size])
-        #   img_shape x batch_size
-        # create encoder distribution
-        #   self.encoder = encoder(self.input, img_shape, latent_size)
-        # sample from ^ then
-        #   self.latent = self.encoder.sample(sample_size)
-        #   latent_size x batch_size
-        # create decoder distribution
-        #   self.decoder = decoder(self.latent, img_shape, latent_size)
-        # create prior dist
-        #   self.prior = prior(latent_size)
-        # create decoder likelihood (against input)
-        #   likelihood = self.decoder.log_prob(self.input)
-        #   prior = self.prior.log_prob(self.latent)
-        #   posterior = self.encoder.log_prob(self.latent)
-        #   self.loss = likelihood + posterior - prior (or something)
-        pass
+        self.input = tf.placeholder(tf.float32, [batch_size, img_size])
+        self.encoder = encoder(self.input, latent_size, units)
+        self.latent = self.encoder.sample(sample_size)
+        self.decoder = decoder(self.latent, img_size, units)
+        self.prior = prior(sample_size, batch_size, latent_size)
+
+        likelihood = self.decoder.log_prob(self.input)
+        latent_prior = self.prior.log_prob(self.latent)
+        latent_posterior = self.encoder.log_prob(self.latent)
+
+        self.loss = (
+            tf.reduce_sum(likelihood) / sample_size +
+            tf.reduce_sum(latent_prior) / sample_size -
+            tf.reduce_sum(latent_posterior) / sample_size
+        )
 
     def decode(self, latent):
         """Decodes the provided latent array, returns a sample from the output.
 
         Args:
-            latent (np.ndarray): A draw_size x latent_size array of latent values.
+            latent (np.ndarray): A sample_size x batch_size x latent_size
+                latent variable array.
 
         Returns:
-            np.ndarray: A draw_size x img_shape array of generated images
+            np.ndarray: A sample_size x batch_size, img_size array of sampled
+                and decoded images.
         """
-        # img = sess.run(self.decoder.sample(), data_dict={self.latent: latent})
-        pass
+        sess = tf.Session()
+        img = sess.run(self.decoder.sample(), data_dict={self.latent: latent})
+        return img
 
     def encode(self, img):
         """Encodes the provided images, returns a sample from the latent posterior.
 
         Args:
-            img (np.ndarray): A draw_size x img_shape array of images.
+            img (np.ndarray): A batch_size x img_size array of flattened images.
 
         Returns:
-            np.ndarray: A draw_size x latent_size array of latent values.
+            np.ndarray: A sample_size x batch_size x latent_size ndarray of
+                latent variables.
         """
-        # latent = sess.run(self.latent, data_dict={self.input: img})
-        pass
+        sess = tf.Session()
+        latent = sess.run(self.latent, data_dict={self.input: img})
+        return latent
