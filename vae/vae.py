@@ -18,7 +18,7 @@ class VAE:
         decoder (tf.distribution.Normal): Decoder distribution.
     """
 
-    def __init__(self, img_size, batch_size=100, latent_size=10,
+    def __init__(self, img_size, batch_size=20, latent_size=10,
                  sample_size=1, units=500):
         """Creates a new instance of VAE.
 
@@ -64,10 +64,12 @@ class VAE:
         """Decodes the provided latent array, returns a sample from the output.
 
         Args:
-            latent (np.ndarray): A draw_size x latent_size array of latent values.
+            latent (np.ndarray): A sample_size x batch_size x latent_size
+                latent variable array.
 
         Returns:
-            np.ndarray: A draw_size x img_shape array of generated images
+            np.ndarray: A sample_size x batch_size, img_size array of sampled
+                and decoded images.
         """
         sess = tf.Session()
         img = sess.run(self.decoder.sample(), data_dict={self.latent: latent})
@@ -77,10 +79,11 @@ class VAE:
         """Encodes the provided images, returns a sample from the latent posterior.
 
         Args:
-            img (np.ndarray): A draw_size x img_shape array of images.
+            img (np.ndarray): A batch_size x img_size array of flattened images.
 
         Returns:
-            np.ndarray: A draw_size x latent_size array of latent values.
+            np.ndarray: A sample_size x batch_size x latent_size ndarray of
+                latent variables.
         """
         sess = tf.Session()
         latent = sess.run(self.latent, data_dict={self.input: img})
