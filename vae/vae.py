@@ -10,7 +10,7 @@ class VAE:
 
     Attributes:
         input (tf.Tensor): Points to image input placeholder.
-        lv (tf.Tensor): Points to latent variable sample tensor.
+        latent (tf.Tensor): Points to latent variable sample tensor.
         loss (tf.Tensor): Points to the ELBO loss tensor.
         prior (tf.distribution.Normal): Prior distribution.
         encoder (tf.distribution.Normal): Encoder / recognition distribution.
@@ -32,41 +32,43 @@ class VAE:
         """
         # create input tensor
         #   self.input = tf.Placeholder(img_shape + [batch_size])
+        #   img_shape x batch_size
         # create encoder distribution
         #   self.encoder = encoder(self.input, img_shape, latent_size)
         # sample from ^ then
-        #   self.lv = self.encoder.sample(sample_size)
+        #   self.latent = self.encoder.sample(sample_size)
+        #   latent_size x batch_size
         # create decoder distribution
-        #   self.decoder = decoder(self.lv, img_shape, latent_size)
+        #   self.decoder = decoder(self.latent, img_shape, latent_size)
         # create prior dist
         #   self.prior = prior(latent_size)
         # create decoder likelihood (against input)
         #   likelihood = self.decoder.log_prob(self.input)
-        #   prior = self.prior.log_prob(self.lv)
-        #   posterior = self.encoder.log_prob(self.lv)
+        #   prior = self.prior.log_prob(self.latent)
+        #   posterior = self.encoder.log_prob(self.latent)
         #   self.loss = likelihood + posterior - prior (or something)
         pass
 
-    def decode(self, lv):
-        """Decodes the provided lv array, returns a sample from the output.
+    def decode(self, latent):
+        """Decodes the provided latent array, returns a sample from the output.
 
         Args:
-            lv (np.ndarray): A draw_size x latent_size array of LV values.
+            latent (np.ndarray): A draw_size x latent_size array of latent values.
 
         Returns:
             np.ndarray: A draw_size x img_shape array of generated images
         """
-        # img = sess.run(self.decoder.sample(), data_dict={self.lv: lv})
+        # img = sess.run(self.decoder.sample(), data_dict={self.latent: latent})
         pass
 
     def encode(self, img):
-        """Encodes the provided images, returns a sample from the LV posterior.
+        """Encodes the provided images, returns a sample from the latent posterior.
 
         Args:
             img (np.ndarray): A draw_size x img_shape array of images.
 
         Returns:
-            np.ndarray: A draw_size x latent_size array of LV values.
+            np.ndarray: A draw_size x latent_size array of latent values.
         """
-        # lv = sess.run(self.lv, data_dict={self.input: img})
+        # latent = sess.run(self.latent, data_dict={self.input: img})
         pass
