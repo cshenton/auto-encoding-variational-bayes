@@ -32,10 +32,12 @@ class VAE:
         """
         # create input tensor
         #   self.input = tf.Placeholder(img_shape + [batch_size])
+        #   img_shape x batch_size
         # create encoder distribution
         #   self.encoder = encoder(self.input, img_shape, latent_size)
         # sample from ^ then
         #   self.lv = self.encoder.sample(sample_size)
+        #   latent_size x batch_size
         # create decoder distribution
         #   self.decoder = decoder(self.lv, img_shape, latent_size)
         # create prior dist

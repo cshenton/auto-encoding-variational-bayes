@@ -1,6 +1,6 @@
 """Encoder builds the encoder network on a given input image."""
 import tensorflow as tf
-import tensorflow.distributions as ds
+from tensorflow import distributions as ds
 
 
 def encoder(img):
@@ -13,4 +13,6 @@ def encoder(img):
         (tf.distribution.Normal): The batch of normal distributions each
             repesenting the posterior LV distribution for that image.
     """
+    x = tf.ones([])
+    y = ds.Normal()
     pass
