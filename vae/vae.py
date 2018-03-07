@@ -53,8 +53,9 @@ class VAE:
         Returns:
             np.ndarray: A draw_size x img_shape array of generated images
         """
-        # img = sess.run(self.decoder.sample(), data_dict={self.latent: latent})
-        pass
+        sess = tf.Session()
+        img = sess.run(self.decoder.sample(), data_dict={self.latent: latent})
+        return img
 
     def encode(self, img):
         """Encodes the provided images, returns a sample from the latent posterior.
@@ -65,5 +66,6 @@ class VAE:
         Returns:
             np.ndarray: A draw_size x latent_size array of latent values.
         """
-        # latent = sess.run(self.latent, data_dict={self.input: img})
-        pass
+        sess = tf.Session()
+        latent = sess.run(self.latent, data_dict={self.input: img})
+        return latent
