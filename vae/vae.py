@@ -18,8 +18,7 @@ class VAE:
         decoder (tf.distribution.Normal): Decoder distribution.
     """
 
-    def __init__(self, img_size, batch_size=20, latent_size=10,
-                 sample_size=1, units=500):
+    def __init__(self, img_size=225, latent_size=10, sample_size=1, units=500):
         """Creates a new instance of VAE.
 
         This creates the complete static graph, which is accessed afterwards
@@ -32,11 +31,11 @@ class VAE:
             sample_size (int): The sample size drawn from the recognition model.
                 Usually 1, since we do stochastic integration.
         """
-        self.input = tf.placeholder(tf.float32, [batch_size, img_size])
+        self.input = tf.placeholder(tf.float32, [None, img_size])
         self.encoder = encoder(self.input, latent_size, units)
         self.latent = self.encoder.sample(sample_size)
         self.decoder = decoder(self.latent, img_size, units)
-        self.prior = prior(sample_size, batch_size, latent_size)
+        self.prior = prior(latent_size)
 
         likelihood = self.decoder.log_prob(self.input)
         latent_prior = self.prior.log_prob(self.latent)
