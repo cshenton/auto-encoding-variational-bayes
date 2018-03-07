@@ -3,15 +3,15 @@ import tensorflow as tf
 from tensorflow import distributions as ds
 
 
-def encoder(img, latent_size=10, units=500):
+def encoder(img, latent_size, units):
     """Encoder builds an encoder network against the provided image tensor.
 
     Args:
-        img (tf.Tensor): img_size x batch_size tensor of flat images.
+        img (tf.Tensor): batch_size x img_size tensor of flat images.
 
     Returns:
-        (tf.distribution.Normal): The batch of normal distributions each
-            repesenting the posterior LV distribution for that image.
+        (tf.distribution.Normal): The batch_shape = (batch_size, latent_size)
+            batch of posterior normal distributions.
     """
     hidden = tf.layers.dense(img, units)
 

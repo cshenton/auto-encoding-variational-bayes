@@ -32,17 +32,33 @@ class VAE:
             sample_size (int): The sample size drawn from the recognition model.
                 Usually 1, since we do stochastic integration.
         """
-        self.input = tf.placeholder(tf.float32, [img_size, batch_size])
+        self.input = tf.placeholder(tf.float32, [batch_size, img_size])
+        # batch_size, img_size
         self.encoder = encoder(self.input, latent_size, units)
+        # batch_shape is (batch_size, latent_size)
         self.latent = self.encoder.sample(sample_size)
+        # sample_size, batch_size, latent_size
         self.decoder = decoder(self.latent, img_size, units)
-        self.prior = prior(latent)
+        # batch_shape is (sample_size, batch_size, latent_size)
+        self.prior = prior(sample_size, batch_size, latent_size)
+        # batch_shape is (sample_size, batch_size, latent_size)
 
         likelihood = self.decoder.log_prob(self.input)
-        prior = self.prior.log_prob(self.latent)
-        posterior = self.encoder.log_prob(self.latent)
+        # get likelihood over each sample
+        # reduce_sum entire tensor, divide by sample_size
+        latent_prior = self.prior.log_prob(self.latent)
+        # get prior over each sample
+        # reduce_sum entire tensor, divide by sample_size
+        latent_posterior = self.encoder.log_prob(self.latent)
+        # get posterior per sample
+        # reduce_sum entire tensor, divide by sample size
 
-        self.loss = likelihood + posterior - prior
+        self.loss = (
+            tf.reduce_sum(likelihood) / sample_size +
+            tf.reduce_sum(latent_prior) / sample_size -
+            tf.reduce_sum(latent_posterior) / sample_size
+        )
+        # scalar
 
     def decode(self, latent):
         """Decodes the provided latent array, returns a sample from the output.
