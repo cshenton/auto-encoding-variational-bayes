@@ -41,13 +41,13 @@ class VAE:
 
         loss_batch = -(
             0.5 * tf.reduce_sum(
-                tf.ones_like(self.encoder.loc) +
-                tf.log(tf.square(self.encoder.loc)) -
+                1 +
+                tf.log(tf.square(self.encoder.scale)) -
                 tf.square(self.encoder.loc) -
                 tf.square(self.encoder.scale),
-                1
+                -1
             ) +
-            tf.reduce_mean(self.likelihood, [0, 2]) / sample_size
+            tf.reduce_mean(tf.reduce_sum(self.likelihood, 2), 0)
         )
         self.loss = tf.reduce_mean(loss_batch)
 

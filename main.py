@@ -1,3 +1,3 @@
 from vae.mnist import train_mnist
 
-train_mnist(200)
+train_mnist(10)
